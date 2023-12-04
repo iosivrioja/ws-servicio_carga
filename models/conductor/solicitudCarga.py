@@ -30,18 +30,20 @@ class SolicitudCarga():
 
         #Preparar la sentencia SQL
         sql = """
-           SELECT 
-                s.id,
-                s.descripcion_carga,
-                c.nombre AS categoria,
-                s.direccion_partida,
-                s.fecha_partida,
-                s.hora_partida
-            FROM
-                solicitudcarga s 
-                INNER JOIN categoriacarga c ON (s.id_categoria_carga = c.id)
-                INNER JOIN usuario u ON (s.id_usuario_cliente = u.id)
-                INNER JOIN asignacionvehiculoconductor a ON (s.id = a.id_solicitud)
+           SELECT sol.id, 
+	                per.nombres AS cliente, 
+	                sol.descripcion_carga AS descripcion, 
+	                cac.nombre AS categoria, 
+	                sol.fecha_partida, 
+	                sol.fecha_llegada, 
+	                sol.monto_pagar
+                FROM solicitudcarga sol
+                INNER JOIN usuario us ON sol.id_usuario_cliente = us.id
+                INNER JOIN persona per ON us.id_persona = per.id
+                INNER JOIN clasecarga clc ON sol.id_clase_carga = clc.id
+                INNER JOIN tipocarga tic ON sol.id_tipo_carga = tic.id
+                INNER JOIN categoriacarga cac ON sol.id_categoria_carga = cac.id
+                INNER JOIN asignacionvehiculoconductor a ON (sol.id = a.id_solicitud)
             WHERE
                 a.id_usuario_conductor = %s
             """
